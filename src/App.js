@@ -2,74 +2,44 @@ import {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const mailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const telReg = /^(\+375|80)(29|25|44|33)(\d{3})(\d{2})(\d{2})$/;
 
 const App = () => {
-  const [counter, setCounter] = useState(0);
-  const [buttons, setButtons] = useState([{name: '++'} ,{name: '--'} , {name: 'reset'}]);
-  const [users, setUsers] = useState([
-  {name: 'serega',age: '21',job: 'Programmer'},
-  {name: 'igor',age: '23',job: 'Operator'},
-  {name: 'eugene',age: '26',job: 'President'}
-  ])
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [job, setJob] = useState('');
-  const [countUsers, setCountUsers] = useState();
-  const [timeout, setTime] = useState(0);
+  const [email, setEmail] = useState('');
+  const [tel, setTel] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [telError, setTelError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setTime(timeout + 1);
-    }, 1000);
-    return () => clearInterval()
-  })
-
-  const changeNumber = (event) => {
-    switch (event) {
-      case '++':
-        setCounter(counter + 1)
+  const check = (value, name) => {
+    console.log(value);
+    switch (name) {
+      case 'password':
+        setPasswordError(value.length < 6);
+        setPassword(value);
         break;
-      case '--':
-        setCounter(counter - 1)
-          break;
-      case 'reset':
-        setCounter(0)
-          break;
-    
+      case 'tel':
+        setTelError(!telReg.test(value));
+        setTel(value);
+        break;
+      case 'email':
+        setEmailError(!mailReg.test(value));
+        setEmail(value);
+        break;
       default:
         break;
     }
-  }
-
-  const button = buttons.map(item => {
-    return <button name = {item.name} onClick={(event) => changeNumber(event.target.name)}>{item.name}</button>
-  })
-
-  const user = users.map(us => {
-    return <div>Имя: {us.name},Возраст: {us.age},Работа: {us.job}</div>
-  })
-
-  const addUser = () => {
-    setUsers([...users, {name, age, job}]);
-    setName('');
-    setAge('');
-    setJob('');
-    setCountUsers(users.length+1);
   }
 
   
   return (
     <div className="App">
       <header className="App-header">
-        {counter}
-        {button}
-        <div>Количество пользователей {countUsers} </div>
-        {user}
-        <input value = {name} placeholder = 'Введите имя' onChange = {(event) => setName(event.target.value)}></input>
-        <input value = {age} placeholder = 'Введите возраст' onChange = {(event) => setAge(event.target.value)}></input>
-        <input value = {job} placeholder = 'Введите работу' onChange = {(event) => setJob(event.target.value)}></input>
-        <button onClick = {(event) => addUser()}>addUser</button>
-        <div>Количество счастливых людей на планете {timeout}</div>
+        <input className = {emailError ? 'error' : ''} name = 'email' value = {email} placeholder='Введите емаил' onChange={(event) => check(event.target.value, event.target.name)}/>
+        <input className = {telError ? 'error' : ''} name = 'tel' value = {tel} placeholder='Введите телефон'onChange={(event) => check(event.target.value, event.target.name)}/>
+        <input className = {passwordError ? 'error' : ''} name = 'password'  value = {password} placeholder='Введите пароль'onChange={(event) => check(event.target.value, event.target.name)}/>
       </header>
     </div>
   );
